@@ -1,11 +1,12 @@
-import { Button, Card, Loader, Message } from 'semantic-ui-react'
+import { Button, Card, FormSelect, Loader, Message } from 'semantic-ui-react'
 import { useGetFilmsQuery } from '../services/swapApi'
 import { nanoid } from '@reduxjs/toolkit'
 import { useDispatch } from 'react-redux'
 import { addFave } from '../features/faves'
-import FilmDetails from './FilmDetails'
+import Details from './Details'
 
-const Films = () => {
+const Films = (props) => {
+	const type = "film"
 	const { data, isError, isLoading } = useGetFilmsQuery()
 	const dispatch = useDispatch()
 	const selectFilm = e => {
@@ -22,26 +23,38 @@ const Films = () => {
 		return <Message error={isError}>There was an error</Message>
 	}
 	if (data && Boolean(data?.results?.length)) {
-		return (
-			<Card.Group>
-				{data.results.map(film => (
-					<Card key={nanoid()}>
-						<Card.Content>
-							<Card.Header>{film.title}</Card.Header>
-							{film && film.characters && <Card.Meta> characters : {film.characters.length}</Card.Meta>}
-							<Card.Description>{film.opening_crawl}</Card.Description>
-						</Card.Content>
-						<Card.Content extra>
-							<FilmDetails details={film} />
-							<Button data-title={film.title} positive content="Add to favourites" onClick={addToFavourites} />
-						</Card.Content>
-					</Card>
-				))}
-			</Card.Group>
-		)
+		switch (props.type) {
+			case "films": 
+			return (
+				<Card.Group>
+					{data.results.map(film => (
+						<StarCard title={film.title} subtitle={"characters :"+ film.characters.length} description={film.opening_crawl} footer={"Release date " + film.release_date} addToFavourites={addToFavourites}/>
+					))}
+				</Card.Group>
+			)
+			case "character":
+				
+		}
 	} else if (data?.results?.length === 0) {
 		return <Message warning>no films found</Message>
 	}
 	return null
 }
 export default Films
+
+
+function StarCard(props) {
+	return (
+		<Card key={nanoid()}>
+			<Card.Content>
+				<Card.Header>{props.title}</Card.Header>
+				<Card.Meta>{props.subtitle}</Card.Meta>
+				<Card.Description>{props.description}</Card.Description>
+			</Card.Content>
+			<Card.Content extra>
+				<Details title={props.title} subtitle={"Directed by "+props.subtitle} description={props.description} footer={props.footer}/>
+				<Button data-title={props.title} positive content="Add to favourites" onClick={props.addToFavourites} />
+			</Card.Content>
+		</Card>
+	);
+}

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Button, Modal } from 'semantic-ui-react'
 
-const Details = ({ details }) => {
+const Details = ({ title, subtitle, description, footer }) => {
 	const [modalOpen, setModalOpen] = useState(false)
-	if (details) {
+	if (title) {
 		return (
 			<Modal
 				onOpen={() => setModalOpen(true)}
@@ -11,12 +11,12 @@ const Details = ({ details }) => {
 				open={modalOpen}
 				trigger={<Button onClick={() => setModalOpen(true)}>view</Button>}
 			>
-				<Modal.Header>{details.title}</Modal.Header>
+				<Modal.Header>{title}</Modal.Header>
 				<Modal.Content>
-					Directed by {details.director}
-					<Modal.Description>Directed by {details.opening_crawl}</Modal.Description>
+					{subtitle}
+					<Modal.Description>{description}</Modal.Description>
 					<Modal.Description>
-						<strong>Release date {details.release_date}</strong>
+						<strong>{footer}</strong>
 					</Modal.Description>
 				</Modal.Content>
 			</Modal>
